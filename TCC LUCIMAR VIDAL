@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Funcionário</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- Inclusão da biblioteca jsPDF -->
     <style>
-        /* Definir a imagem de fundo */
         body {
             font-family: Arial, sans-serif;
             background-image: url('https://img.freepik.com/fotos-premium/parede-no-quarto-das-criancas-na-parede-de-fundo-branco-renderizacao-3d_41470-1810.jpg?w=1380');
@@ -76,6 +76,16 @@
             font-size: 16px;
             color: #333;
         }
+
+        .btn-container {
+            margin-top: 20px;
+        }
+
+        /* Adicionando margem entre os botões */
+        .msg button + button {
+            margin-top: 10px; /* Define um espaço de 10px entre os botões */
+        }
+
     </style>
 </head>
 <body>
@@ -87,20 +97,40 @@
             <button class="btn" onclick="mostrarCadastro()">Cadastrar Novo Funcionário</button>
         </div>
 
+        <!-- Adicionando o botão de acesso ao treinamento -->
+        <div id="treinamentoInicial" class="btn-container" style="display: block;">
+            <button class="btn" onclick="acessarTreinamento()">Acesso ao Treinamento</button>
+        </div>
+
         <div id="formContainer" style="display: none;"></div>
 
         <!-- Div para mostrar a mensagem de sucesso após o cadastro -->
         <div id="msgSucesso" class="msg" style="display: none;">
             <p>Funcionário cadastrado com sucesso!</p>
             <button class="btn" onclick="mostrarCadastro()">Cadastrar novo funcionário</button>
+            <!-- Botão para voltar à tela inicial -->
+            <button class="btn" onclick="voltarTelaInicial()">Voltar à Tela Inicial</button>
         </div>
 
+        <!-- Div para o botão de iniciar treinamento -->
+        <div id="msgTreinamento" class="msg" style="display: none;">
+            <p>Clique no botão abaixo para iniciar o treinamento:</p>
+            <button class="btn" onclick="iniciarTreinamento()">Iniciar Treinamento</button>
+        </div>
+
+        <!-- Div para mostrar a mensagem de conclusão do curso -->
+        <div id="msgConclusao" class="msg" style="display: none;">
+            <p>Curso Concluído!</p>
+            <button class="btn" onclick="gerarPDF()">Gerar Certificado (PDF)</button>
+            <button class="btn" onclick="voltarTelaInicial()">Voltar à Tela Inicial</button>
+        </div>
     </div>
 
     <script>
         function mostrarCadastro() {
-            // Oculta o botão de cadastro inicial
+            // Oculta o botão de cadastro inicial e o de acesso ao treinamento
             document.getElementById('formularioInicial').style.display = 'none';
+            document.getElementById('treinamentoInicial').style.display = 'none';
 
             // Exibe o formulário de cadastro
             const formHTML = `
@@ -146,7 +176,51 @@
             document.getElementById('formContainer').style.display = 'none'; // Esconde o formulário
             document.getElementById('msgSucesso').style.display = 'block'; // Exibe a mensagem de sucesso
         }
+
+        function acessarTreinamento() {
+            // Esconde a tela inicial de acesso ao treinamento
+            document.getElementById('formularioInicial').style.display = 'none';
+            document.getElementById('treinamentoInicial').style.display = 'none'; // Esconde o botão de treinamento
+
+            // Exibe o botão para iniciar o treinamento
+            document.getElementById('msgTreinamento').style.display = 'block';
+        }
+
+        function iniciarTreinamento() {
+            // Abre o link do treinamento no YouTube
+            window.open("https://www.youtube.com/watch?v=YBMq5c2ssY0", "_blank");
+
+            // Após o vídeo, mostra a tela de conclusão do curso
+            document.getElementById('msgTreinamento').style.display = 'none'; // Esconde a tela de treinamento
+            document.getElementById('msgConclusao').style.display = 'block'; // Exibe a tela de conclusão
+        }
+
+        function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Adiciona o conteúdo ao PDF
+	doc.text("Decorative on-line", 20, 20);
+            doc.text("Certificado de Conclusão de Curso", 20, 40);
+            doc.text("Este é um certificado de conclusão do treinamento de LGPD", 20, 60);
+            doc.text("Nome do Funcionário: [Nome do Funcionário]", 20, 80); // Aqui você pode adicionar o nome do funcionário, se necessário.
+            doc.text("Data: " + new Date().toLocaleDateString(), 20, 100);
+
+            // Gera o PDF
+            doc.save('certificado_conclusao.pdf');
+        }
+
+        function voltarTelaInicial() {
+            // Exibe a tela inicial de acesso ao treinamento e de cadastro
+            document.getElementById('formularioInicial').style.display = 'block';
+            document.getElementById('treinamentoInicial').style.display = 'block';
+
+            // Esconde todas as outras seções
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('msgSucesso').style.display = 'none';
+            document.getElementById('msgTreinamento').style.display = 'none';
+            document.getElementById('msgConclusao').style.display = 'none';
+        }
     </script>
 </body>
 </html>
-
